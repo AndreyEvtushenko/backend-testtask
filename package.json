@@ -1,0 +1,29 @@
+{
+  "type": "module",
+  "name": "testtask",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndreyEvtushenko/ivashin-backend-testtask.git"
+  },
+  "author": "AndreyEvtushenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndreyEvtushenko/ivashin-backend-testtask/issues"
+  },
+  "homepage": "https://github.com/AndreyEvtushenko/ivashin-backend-testtask#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}
