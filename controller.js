@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import { validationResult } from 'express-validator'
 import Auth from './models/authorization.js'
+import User from './models/user.js'
 import generateAccessToken from './accesstoken.js'
 import HttpError from './httperror.js'
 import RegistrationError from './regerror.js'
@@ -72,4 +73,12 @@ export default {
       }
     }
   },
+
+  async image(req, res) {
+    await User.create({
+      image: '/images/' + req.file.filename
+    })
+
+    res.json({message: 'Image successfully uploaded'})
+  }
 }

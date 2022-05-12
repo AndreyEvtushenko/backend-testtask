@@ -3,6 +3,7 @@ import { check } from 'express-validator'
 import controller from './controller.js'
 import auth from './middlewares/checkauth.js'
 import role from './middlewares/checkrole.js'
+import uploadImage from './middlewares/image.js'
 
 const router = Router()
 
@@ -13,5 +14,6 @@ router.post('/registration',
   check('password', 'Password must be at least 4 characters long').isLength({ min: 4 }),
   controller.registration)
 router.post('/login', controller.login)
+router.post('/image', uploadImage.single('image'), controller.image)
 
 export default router
