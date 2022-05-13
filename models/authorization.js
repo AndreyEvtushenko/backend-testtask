@@ -1,8 +1,9 @@
 import { DataTypes } from 'sequelize'
 import sequelize from './orm.js'
+import User from './user.js'
 
 const Auth = sequelize.define('Auth', {
-  login: {
+  email: {
     type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true,
@@ -18,6 +19,16 @@ const Auth = sequelize.define('Auth', {
   freezeTableName: true
 })
 
+User.hasOne(Auth, {
+  onDelete: 'RESTRICT',
+  onUpdate: 'RESTRICT',
+  foreignKey: 'email'
+})
+Auth.belongsTo(User, {
+  onDelete: 'RESTRICT',
+  onUpdate: 'RESTRICT',
+  foreignKey: 'email'
+})
 await Auth.sync()
 
 export default Auth
