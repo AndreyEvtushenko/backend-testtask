@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize'
 import sequelize from './orm.js'
-import Auth from './authorization.js'
 
 const User = sequelize.define('User', {
   email: {
@@ -9,20 +8,23 @@ const User = sequelize.define('User', {
   },
   firstName: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   lastName: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   image: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   pdf: {
-    type: DataTypes.BLOB
+    type: DataTypes.BLOB,
+    allowNull: true,
   }
 }, {
   freezeTableName: true,
 })
-
 
 await User.sync()
 
