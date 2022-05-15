@@ -26,7 +26,8 @@ form-data example:
   image: *image*
   role: user or admin
 ```
-User can work only with his record. Admin has access to all records
+User can work only with his record. Admin has access to all records  
+
 2. Login
 ```
 POST http://localhost:8080/login
@@ -35,18 +36,20 @@ POST http://localhost:8080/login
     "password": "1234"
 }
 ```
-Returns access token with email and role in it's payload
+Returns access token with email and role in it's payload  
+
 3. Read
 ```
 GET http://localhost:8080/read?email=boo@foo.com
 + authorization header
 ```
-returns firstName, lastName and image url
+Returns firstName, lastName and image url
 ```
 GET http://localhost:8080/pdf?email=boo@foo.com
 + authorization header
 ```
-returns download response with pdf
+Returns download response with pdf  
+
 4. Update
 ```
 POST http://localhost:8080/update?email=boo@foo.com
@@ -57,7 +60,8 @@ form-data example:
   lastName: Bulkin
   image: *image*
 ```
-Returns new access token if email was changed
+Returns new access token if email was changed  
+
 5. Delete
 ```
 POST http://localhost:8080/delete?email=boo@foo.com
@@ -80,4 +84,4 @@ POST http://localhost:8080/pdf
 }
 ```
 # Technologies
-Node.js, Express.js, Sequelize, bcrypt, express-validator, jsonwebtoken, Multer, Pdfkit
+Node.js, Express.js, Sequelize, bcrypt, express-validator, jsonwebtoken, Multer, Pdfkit, MySQL
