@@ -104,7 +104,9 @@ export default {
       if(!user) {
         throw new HttpError(400, 'No such user')
       }
-      user.image = user.image.replace('/images', 'http://localhost:' + PORT)
+      if(user.image) {
+        user.image = user.image.replace('/images', 'http://localhost:' + PORT)
+      }
 
       res.json(user)
     } catch(err) {
@@ -131,8 +133,8 @@ export default {
       const user = await User.findByPk(req.query.email, {
         attributes: ['pdf']
       })
-      if(!user) {
-        throw new HttpError(400, 'No such user')
+      if(!user.pdf) {
+        throw new HttpError(400, 'There are no pdf for this email')
       }
       
       await writeFile('output.pdf', user.pdf)
@@ -163,6 +165,10 @@ export default {
       }
       
       const user = await User.findByPk(req.body.email)
+      if(!user) {
+        throw new HttpError(400, 'No such user')
+      }
+
       user.image = '/images/' + req.file.filename
       await user.save()        
 
@@ -188,7 +194,7 @@ export default {
         throw new ValidationError(400, 'Wrong fields values', errors.errors)
       }
 
-      const exists = await User.findByPk(req.body.email)
+      const exists = await User.findByPk(req.query.email)
       if(!exists) {
         throw new HttpError(400, 'No such email')
       }
@@ -205,10 +211,18 @@ export default {
         where: {
           email: req.query.email
         }
-      }) 
+      })
 
-      res.json({message: 'Update completed'})
-    } catch(error) {
+      if(req.body.newEmail != req.query.email) {
+        const {email, role} = await Auth.findByPk(req.body.newEmail, {
+          attributes: ['email', 'role']
+        })
+        const token = generateAccessToken({email, role})
+        res.json({message: 'Update completed', token})
+      } else {
+        res.json({message: 'Update completed'})
+      }
+    } catch(err) {
       if(err instanceof ValidationError) {
         console.log('Validation Error:', err.message);
         res.status(err.code).json({message: err.message, errors: err.errors})
@@ -279,7 +293,9 @@ export default {
       doc
         .fontSize(25)
         .text(user.firstName + ' ' + user.lastName, 100, 100)
-      doc.image(process.cwd() + user.image)  
+      if(user.image) {
+        doc.image(process.cwd() + user.image)
+      }
       doc.end()
 
       writableStream.on('close', () => {
