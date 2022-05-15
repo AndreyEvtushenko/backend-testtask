@@ -209,6 +209,44 @@ export default {
     }
   },
 
+  async update(req,res) {
+    try {
+      const errors = validationResult(req)
+      if(!errors.isEmpty()) {
+        throw new RegistrationError(400, 'Wrong fields values', errors.errors)
+      }
+
+      const exists = await User.findByPk(req.body.email)
+      if(exists) {
+        throw new RegistrationError(400, 'Email is already in use')
+      }
+      const updatedUser = {
+        email: req.body.newEmail,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+      }
+      if(req.file) {
+        updatedUser.image = '/images/' + req.file.filename
+      }
+
+      await User.update(updatedUser, {
+        where: {
+          email: req.query.email
+        }
+      }) 
+
+      res.json({message: 'Update completed'})
+    } catch(error) {
+      if(error instanceof RegistrationError) {
+        console.log('Registration Error:', error.message);
+        console.log(error.errors);
+        res.status(error.code).json({message: error.message, errors: error.errors})
+      } else {
+        throw error
+      }
+    }
+  },
+
   async pdf(req, res) {
     try {
       const user = await User.findByPk(req.body.email)

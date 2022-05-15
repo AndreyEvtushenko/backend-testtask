@@ -20,13 +20,13 @@ const Auth = sequelize.define('Auth', {
 })
 
 User.hasOne(Auth, {
-  onDelete: 'RESTRICT',
-  onUpdate: 'RESTRICT',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
   foreignKey: 'email'
 })
 Auth.belongsTo(User, {
-  onDelete: 'RESTRICT',
-  onUpdate: 'RESTRICT',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
   foreignKey: 'email'
 })
 await Auth.sync()
