@@ -217,8 +217,8 @@ export default {
       }
 
       const exists = await User.findByPk(req.body.email)
-      if(exists) {
-        throw new RegistrationError(400, 'Email is already in use')
+      if(!exists) {
+        throw new RegistrationError(400, 'No such email')
       }
       const updatedUser = {
         email: req.body.newEmail,
@@ -243,6 +243,38 @@ export default {
         res.status(error.code).json({message: error.message, errors: error.errors})
       } else {
         throw error
+      }
+    }
+  },
+
+  async delete(req, res) {
+    try {
+      const errors = validationResult(req)
+      if(!errors.isEmpty()) {
+        throw new ValidationError(400, 'Wrong fields values', errors.errors)
+      }
+
+      const exists = await User.findByPk(req.query.email)
+      if(!exists) {
+        throw new ValidationError(400, 'No such email')
+      }
+
+      await User.destroy({
+        where: {
+          email: req.query.email
+        }
+      })
+
+      res.json({message: 'Record deleted'})
+    } catch(err) {
+      if(err instanceof ValidationError) {
+        console.log('Validation Error:', err.message);
+        res.status(err.code).json({message: err.message, errors: err.errors})
+      } else if(err instanceof HttpError) {
+        console.log('HTTP Error:', err.message);
+        res.status(err.code).json({message: err.message})
+      } else {
+        throw err
       }
     }
   },
