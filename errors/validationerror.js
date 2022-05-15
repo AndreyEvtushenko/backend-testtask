@@ -1,4 +1,4 @@
-import HttpError from '../httperror.js'
+import HttpError from './httperror.js'
 
 export default class ValidationError extends HttpError {
   constructor(code, message, validationErrors) {

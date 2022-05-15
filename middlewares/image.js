@@ -1,5 +1,5 @@
 import multer from 'multer'
-import HttpError from '../httperror.js'
+import HttpError from '../errors/httperror.js'
 
 const imageFilter = (req, file, callback) => {
   if(file.mimetype.startsWith('image')) {
@@ -9,10 +9,10 @@ const imageFilter = (req, file, callback) => {
   }
 }
 const storage = multer.diskStorage({
-  destination: function(req, file, callback) {
+  destination(req, file, callback) {
     callback(null, process.cwd() + '/images')
   },
-  filename: function(req, file, callback) {
+  filename(req, file, callback) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
     callback(null, uniqueSuffix + file.originalname)
   }

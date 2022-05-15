@@ -2,14 +2,10 @@ import { Router } from 'express'
 import { check } from 'express-validator'
 import controller from './controller.js'
 import checkauth from './middlewares/checkauth.js'
-import auth from './middlewares/checkauth.js'
-import role from './middlewares/checkrole.js'
 import uploadImage from './middlewares/image.js'
 
 const router = Router()
 
-router.get('/checkauth', auth, controller.test)
-router.get('/checkrole', role(['admin']), controller.test)
 router.post('/registration',
   uploadImage.single('image'),
   check('email', 'Wrong email').isEmail(),

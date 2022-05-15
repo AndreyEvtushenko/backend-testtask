@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { validationResult } from 'express-validator'
 import key from '../key.js'
-import HttpError from '../httperror.js'
+import HttpError from '../errors/httperror.js'
 import ValidationError from '../errors/validationerror.js'
 
 export default function(req, res, next) {
@@ -23,12 +23,12 @@ export default function(req, res, next) {
       }     
     }
     next()
-  } catch(error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      console.log('JWT Error:', error.message);
-      res.status(403).json({message: error.message})
+  } catch(err) {
+    if(err instanceof jwt.JsonWebTokenError) {
+      console.log('JWT Error:', err.message);
+      res.status(403).json({message: err.message})
     } else {
-      throw error
+      throw err
     }
   }
 }
