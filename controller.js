@@ -1,11 +1,12 @@
 import bcrypt from 'bcrypt'
 import { validationResult } from 'express-validator'
 import PDFDocument from 'pdfkit'
-import fs from 'fs'
 import Stream from 'stream'
+import { writeFile, rm } from 'fs/promises'
 import Auth from './models/authorization.js'
 import User from './models/user.js'
 import generateAccessToken from './accesstoken.js'
+import PORT from './index.js'
 import HttpError from './httperror.js'
 import RegistrationError from './regerror.js'
 import ValidationError from './errors/validationerror.js'
@@ -117,6 +118,64 @@ export default {
         res.status(error.code).json({message: error.message, errors: error.errors})
       } else {
         throw error
+      }
+    }
+  },
+
+  async read(req, res) {
+    try {
+      const errors = validationResult(req)
+      if(!errors.isEmpty()) {
+        throw new ValidationError(400, 'Wrong fields values', errors.errors)
+      }
+
+      const user = await User.findByPk(req.query.email, {
+        attributes: ['firstName', 'lastName', 'image']
+      })
+      if(!user) {
+        throw new HttpError(400, 'No such user')
+      }
+      user.image = user.image.replace('/images', 'http://localhost:' + PORT)
+
+      res.json(user)
+    } catch(err) {
+      if(err instanceof ValidationError) {
+        console.log('Validation Error:', err.message);
+        res.status(err.code).json({message: err.message, errors: err.errors})
+      } else if(err instanceof HttpError) {
+        console.log('HTTP Error:', err.message);
+        res.status(err.code).json({message: err.message})
+      } else {
+        throw err
+      }
+    }
+  },
+
+  async downloadPdf(req, res) {
+    try {
+      const errors = validationResult(req)
+      if(!errors.isEmpty()) {
+        throw new ValidationError(400, 'Wrong fields values', errors.errors)
+      }
+
+      const user = await User.findByPk(req.query.email, {
+        attributes: ['pdf']
+      })
+      if(!user) {
+        throw new HttpError(400, 'No such user')
+      }
+      
+      await writeFile('output.pdf', user.pdf)
+      res.download('./output.pdf', () => rm('./output.pdf'))
+    } catch(err) {
+      if(err instanceof ValidationError) {
+        console.log('Validation Error:', err.message);
+        res.status(err.code).json({message: err.message, errors: err.errors})
+      } else if(err instanceof HttpError) {
+        console.log('HTTP Error:', err.message);
+        res.status(err.code).json({message: err.message})
+      } else {
+        throw err
       }
     }
   },

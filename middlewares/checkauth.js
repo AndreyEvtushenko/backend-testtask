@@ -17,7 +17,7 @@ export default function(req, res, next) {
     }
 
     const {email, role} = jwt.verify(token, key)
-    if(email != req.body.email) {
+    if(email != (req.body.email || req.query.email)) {
       if(role != 'admin') {
         throw new HttpError(403, 'You have no rights for this')
       }     

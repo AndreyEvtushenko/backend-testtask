@@ -22,12 +22,16 @@ router.post('/login',
   check('email', 'Wrong email').exists().isEmail(),
   check('password', 'Password must be at least 4 characters long').exists().isLength({ min: 4 }),
   controller.login)
-/* router.post('/create', 
-  uploadImage.single('image'),
-  check('email', 'Wrong email').isEmail(),
-  check('firstName', 'First name can\'t be empty').notEmpty(),
-  check('lastName', 'Last name can\'t be empty').notEmpty(),
-  controller.create) */
+router.get('/read',
+  check('Authorization', 'There are no authorization header').exists(),
+  check('email', 'There should be email parameter').isEmail(),
+  checkauth,
+  controller.read)
+router.get('/pdf',
+  check('Authorization', 'There are no authorization header').exists(),
+  check('email', 'There should be email parameter').isEmail(),
+  checkauth,
+  controller.downloadPdf)
 router.post('/image',
   check('Authorization', 'There are no authorization header').exists(),
   uploadImage.single('image'),
