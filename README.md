@@ -15,16 +15,69 @@
 2. авторизация
 
 # API
-Create user (registration)
+1. Create user (registration)
 ```
 POST http://localhost:8080/registration
 form-data example:
-email: boo@foo.com
-password: 1234
-firstName: Vova
-lastName: Bulkin
-image: *imgage*
-role: user or admin
+  email: boo@foo.com
+  password: 1234
+  firstName: Vova
+  lastName: Bulkin
+  image: *image*
+  role: user or admin
 ```
-
+User can work only with his record. Admin has access to all records
+2. Login
+```
+POST http://localhost:8080/login
+{
+    "email": "boo@foo.com",
+    "password": "1234"
+}
+```
+Returns access token with email and role in it's payload
+3. Read
+```
+GET http://localhost:8080/read?email=boo@foo.com
++ authorization header
+```
+returns firstName, lastName and image url
+```
+GET http://localhost:8080/pdf?email=boo@foo.com
++ authorization header
+```
+returns download response with pdf
+4. Update
+```
+POST http://localhost:8080/update?email=boo@foo.com
++ authorization header
+form-data example:
+  newEmail: boo@user.com
+  firstName: Vova
+  lastName: Bulkin
+  image: *image*
+```
+Returns new access token if email was changed
+5. Delete
+```
+POST http://localhost:8080/delete?email=boo@foo.com
++ authorization header
+```
+6. Load image
+```
+POST http://localhost:8080/image
++ authorization header
+form-data example:
+  email: boo@foo.com
+  image: *image*
+```
+7. Make PDF
+```
+POST http://localhost:8080/pdf
++ authorization header
+{
+    "email": "boo@foo.com"
+}
+```
 # Technologies
+Node.js, Express.js, Sequelize, bcrypt, express-validator, jsonwebtoken, Multer, Pdfkit
